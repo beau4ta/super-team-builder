@@ -19,5 +19,8 @@
   "bugs": {
     "url": "https://github.com/beau4ta/super-team-builder/issues"
   },
-  "homepage": "https://github.com/beau4ta/super-team-builder#readme"
+  "homepage": "https://github.com/beau4ta/super-team-builder#readme",
+  "dependencies": {
+    "inquirer": "8.0.0"
+  }
 }

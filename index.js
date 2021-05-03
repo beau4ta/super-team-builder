@@ -3,28 +3,13 @@ const fs = require('fs');
 const Engineer = require('./lib/engineer');
 const Manager = require('./lib/manager');
 const Intern = require('./lib/intern');
-const generateTeam = require('./src/page-template');
 const team = [];
 
 function init(){
-    generateTeam();
-    teamName();
+    startHTML();
+    createManager();
 }
 init();
-
-function teamName(){
-    inquirer.prompt([
-        {
-            type: "input",
-            message: "What would you like your team name to be?",
-            name: "team"
-        }
-    ]).then(function(response) {
-        const name = response.team;
-        team.push(name);
-        createManager();
-    })
-}
 
 function createTeam(){
     inquirer.prompt([
@@ -47,6 +32,7 @@ function createTeam(){
                 createIntern();
                 break;
             case "No":
+                endHTML();
                 break;
         }
     })
@@ -82,6 +68,7 @@ function createManager() {
         const manager = new Manager(name, id, email, number);
         team.push(manager)
         createTeam();
+        addCardHTML(manager);
     })
 }
 
@@ -116,6 +103,7 @@ function createEngineer() {
         const engineer = new Engineer(name, id, email, github);
         team.push(engineer);
         createTeam();
+        addCardHTML(engineer);
     })
 };
 
@@ -150,5 +138,112 @@ function createIntern() {
         const intern = new Intern(name, id, email, school);
         team.push(intern);
         createTeam();
+        addCardHTML(intern);
     })
 };
+
+function startHTML() {
+    const html = `<!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Super Team Builder</title>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+        <link rel="preconnect" href="https://fonts.gstatic.com">
+        <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="styles.css">
+    </head>
+    <body>
+        <nav class="navbar navbar-light">
+            <div class="container-fluid">
+              <span class="navbar-brand mb-0 h1">Super Team Builder</span>
+            </div>
+          </nav>`;
+
+          console.log("START");
+
+        fs.writeFile("./dist/index.html", html, function(err) {
+            if (err) {
+                console.log(err);
+            }
+        })
+}
+
+function addCardHTML(member) {
+    return new Promise(function(resolve, reject) {
+        const name = member.getName();
+        const role = member.getRole();
+        const id = member.getId();
+        const email = member.getEmail();
+        let data = '';
+        if (role === "Engineer") {
+            const github = member.getGithub();
+            data = `<br>
+            <div class="row">
+            <div class="empty col-md-4"></div>
+            <div class="card-container col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                    <h1 class="card-title">${name}</h1>
+                    <h2 class="card-subtitle mb-2 text-muted">${role}</h2>
+                    <p class="github">${github}</p>
+                    <a href="mailto: ${email}">${email}</a>
+                    <p class="id">${id}</p>
+                    </div>
+                </div>
+            </div>
+        </div>`
+        } else if (role === "Intern") {
+            const school = member.getSchool();
+            data = `<div class="empty col-md-4"></div>
+            <div class="card-container col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                    <h1 class="card-title">${name}</h1>
+                    <h2 class="card-subtitle mb-2 text-muted">${role}</h2>
+                    <p class="school">${school}</p>
+                    <a href="mailto: ${email}">${email}</a>
+                    <p class="id">${id}</p>
+                    </div>
+                </div>
+            </div>
+        </div>`
+        } else {
+            const number = member.getNumber();
+            data = `<div class="row"></div>
+            <div class="empty col-md-4"></div>
+            <div class="card-container col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                    <h1 class="card-title">${name}</h1>
+                    <h2 class="card-subtitle mb-2 text-muted">${role}</h2>
+                    <p class="number">${number}</p>
+                    <a href="mailto: ${email}">${email}</a>
+                    <p class="id">${id}</p>
+                    </div>
+                </div>
+            </div>
+        </div>`
+        }
+        fs.appendFile("./dist/index.html", data, function(err) {
+            if (err) {
+                return reject(err);
+            };
+            return resolve();
+        });
+    });
+}
+
+function endHTML() {
+    const html = `
+    </body>
+    </html>`;
+    console.log("END")
+
+    fs.appendFile("./dist/index.html", html, function (err){
+        if (err) {
+            console.log(err);
+        }
+    })
+}

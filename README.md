@@ -13,7 +13,7 @@
   - [Questions](#questions)
 
   ## Installation
-  npm install also install express
+  npm install also install express and jest
 
   ## Usage
   node index.js and respond to the prompts

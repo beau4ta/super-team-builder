@@ -3,7 +3,6 @@ const fs = require('fs');
 const Engineer = require('./lib/engineer');
 const Manager = require('./lib/manager');
 const Intern = require('./lib/intern');
-const team = [];
 
 function init(){
     startHTML();
@@ -66,7 +65,6 @@ function createManager() {
         const email = response.email;
         const number = response.number;
         const manager = new Manager(name, id, email, number);
-        team.push(manager)
         createTeam();
         addCardHTML(manager);
     })
@@ -101,7 +99,6 @@ function createEngineer() {
         const email = response.email;
         const github = response.github;
         const engineer = new Engineer(name, id, email, github);
-        team.push(engineer);
         createTeam();
         addCardHTML(engineer);
     })
@@ -136,7 +133,6 @@ function createIntern() {
         const email = response.email;
         const school = response.school;
         const intern = new Intern(name, id, email, school);
-        team.push(intern);
         createTeam();
         addCardHTML(intern);
     })
@@ -179,15 +175,13 @@ function addCardHTML(member) {
         let data = '';
         if (role === "Engineer") {
             const github = member.getGithub();
-            data = `<br>
-            <div class="row">
-            <div class="empty col-md-4"></div>
+            data = `
             <div class="card-container col-md-4">
                 <div class="card">
                     <div class="card-body">
                     <h1 class="card-title">${name}</h1>
                     <h2 class="card-subtitle mb-2 text-muted">${role}</h2>
-                    <p class="github">${github}</p>
+                    <p><a href="www.github.com/${github}">${github}</a></p>
                     <a href="mailto: ${email}">${email}</a>
                     <p class="id">${id}</p>
                     </div>
@@ -196,6 +190,7 @@ function addCardHTML(member) {
         </div>`
         } else if (role === "Intern") {
             const school = member.getSchool();
+            console.log(member.getSchool())
             data = `<div class="empty col-md-4"></div>
             <div class="card-container col-md-4">
                 <div class="card">
@@ -211,8 +206,7 @@ function addCardHTML(member) {
         </div>`
         } else {
             const number = member.getNumber();
-            data = `<div class="row"></div>
-            <div class="empty col-md-4"></div>
+            data = `
             <div class="card-container col-md-4">
                 <div class="card">
                     <div class="card-body">
